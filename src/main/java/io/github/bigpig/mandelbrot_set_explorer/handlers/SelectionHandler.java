@@ -31,31 +31,40 @@ public class SelectionHandler {
         double clampedCurrentX = clamp(currentX, LEFT_BOARD, RIGHT_BOARD);
         double clampedCurrentY = clamp(currentY, TOP_BOARD, BOTTOM_BOARD);
 
-        double x = Math.min(initialX, clampedCurrentX);
-        double y = Math.min(initialY, clampedCurrentY);
         double width = Math.abs(clampedCurrentX - initialX);
         double height = Math.abs(clampedCurrentY - initialY);
+        double length = Math.min(width, height);
+
+        if (width < height && clampedCurrentY < initialY) {
+            clampedCurrentY = clamp(initialY - length, TOP_BOARD, BOTTOM_BOARD);
+        } else if (width >= height && clampedCurrentX < initialX) {
+           clampedCurrentX = clamp(initialX - length, TOP_BOARD, BOTTOM_BOARD);
+        }
+
+        double x = Math.min(initialX, clampedCurrentX);
+        double y = Math.min(initialY, clampedCurrentY);
+
 
         if (!isCreatedSelectionRectangle) {
-            createSelectionRectangle(x, y, width, height);
+            createSelectionRectangle(x, y, length);
             isCreatedSelectionRectangle = true;
         } else {
-            updateSelectionRectangle(x, y, width, height);
+            updateSelectionRectangle(x, y, length);
         }
     }
 
-    private void createSelectionRectangle(double x, double y, double width, double height) {
-        selection = new Rectangle(x, y, width, height);
+    private void createSelectionRectangle(double x, double y, double length) {
+        selection = new Rectangle(x, y, length, length);
         selection.setFill(Color.AQUA.deriveColor(0, 1, 1, 0.3));
         selection.setStroke(Color.AQUA);
         pane.getChildren().add(selection);
     }
 
-    private void updateSelectionRectangle(double x, double y, double width, double height) {
+    private void updateSelectionRectangle(double x, double y, double length) {
         selection.setX(x);
         selection.setY(y);
-        selection.setWidth(width);
-        selection.setHeight(height);
+        selection.setWidth(length);
+        selection.setHeight(length);
     }
 
     public void deleteSelectionRectangle() {
