@@ -25,14 +25,13 @@ public class MainApplication extends Application {
 
         SelectionHandler selectionHandler = new SelectionHandler(pane);
 
-        scene.addEventHandler(MouseEvent.MOUSE_PRESSED, event -> {
-            selectionHandler.setInitialPoint(event.getX(), event.getY());
-        });
+        scene.addEventHandler(MouseEvent.MOUSE_PRESSED, event ->
+                selectionHandler.setInitialPoint(event.getX(), event.getY()));
 
         scene.addEventHandler(MouseEvent.MOUSE_DRAGGED, event ->
                 selectionHandler.makeSelection(event.getX(), event.getY()));
 
-        scene.addEventHandler(MouseEvent.MOUSE_RELEASED, event ->
+        scene.addEventHandler(MouseEvent.MOUSE_RELEASED, _ ->
                 selectionHandler.deleteSelectionRectangle());
 
         scene.getStylesheets().add(
