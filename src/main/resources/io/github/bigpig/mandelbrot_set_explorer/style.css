@@ -1,0 +1,29 @@
+.root {
+    -fx-background-color: #000000;
+}
+
+.rectangle {
+    -fx-fill: #4b4545;
+    -fx-stroke: #000000;
+    -fx-stroke-width: 1;
+}
+
+.back-button {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+    -fx-background-color: #4a4a4a;
+    -fx-border-color: #666666;
+    -fx-border-width: 1;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+}
+
+.back-button:hover {
+    -fx-background-color: #5a5a5a;
+    -fx-cursor: hand;
+}
+
+.back-button:pressed {
+    -fx-background-color: #3a3a3a;
+}
