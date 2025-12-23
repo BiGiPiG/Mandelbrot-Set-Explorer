@@ -2,8 +2,9 @@ package io.github.bigpig.mandelbrot_set_explorer.Configuration;
 
 import io.github.bigpig.mandelbrot_set_explorer.MainApplication;
 import javafx.scene.control.Button;
+import javafx.scene.image.ImageView;
+import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.shape.Rectangle;
 
 public class Configuration {
     public static final int WORK_AREA_WIDTH = 500;
@@ -13,13 +14,11 @@ public class Configuration {
     public static final int BUTTON_HEIGHT = 30;
     public static final int BUTTON_Y_SHIFT = 510;
 
-    public static Rectangle createWorkArea(Rectangle workArea) {
-        workArea.setWidth(WORK_AREA_WIDTH);
-        workArea.setHeight(WORK_AREA_HEIGHT);
-        workArea.setX(10);
-        workArea.setY(10);
-        workArea.getStyleClass().add("rectangle");
-        return workArea;
+    public static ImageView createWorkArea(WritableImage image) {
+        ImageView imageView = new ImageView(image);
+        imageView.setX(10);
+        imageView.setY(10);
+        return imageView;
     }
 
     public static Button createBackButton() {
