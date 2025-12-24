@@ -2,6 +2,7 @@ package io.github.bigpig.mandelbrot_set_explorer;
 
 import io.github.bigpig.mandelbrot_set_explorer.Configuration.Configuration;
 import io.github.bigpig.mandelbrot_set_explorer.handlers.SelectionHandler;
+import io.github.bigpig.mandelbrot_set_explorer.utils.ComplexNumber;
 import io.github.bigpig.mandelbrot_set_explorer.utils.Point;
 import io.github.bigpig.mandelbrot_set_explorer.utils.SetBuilder;
 import io.github.bigpig.mandelbrot_set_explorer.utils.SimpleSetBuilder;
@@ -51,11 +52,16 @@ public class MainApplication extends Application {
     }
 
     public static void printFractal(WritableImage image) {
-        Point buttomLeftPoint = new Point(-2.0, -1.5);
-        Point topRightPoint = new Point(1.0, 1.5);
-        SetBuilder setBuilder = new SimpleSetBuilder();
-        setBuilder.build(image, buttomLeftPoint, topRightPoint);
+        Point leftTop = new Point(0, 0);
+        Point rightBottom = new Point(500, 500);
+        SetBuilder setBuilder = new SimpleSetBuilder(Configuration.WORK_AREA_WIDTH, Configuration.WORK_AREA_HEIGHT, 1000);
+
+        ComplexNumber bottomLeftPoint = setBuilder.computeBorderComplexNumber(leftTop,
+                Configuration.WORK_AREA_WIDTH, Configuration.WORK_AREA_HEIGHT);
+
+        ComplexNumber topRightPoint = setBuilder.computeBorderComplexNumber(rightBottom,
+                Configuration.WORK_AREA_WIDTH, Configuration.WORK_AREA_HEIGHT);
+
+        setBuilder.build(image, bottomLeftPoint, topRightPoint);
     }
-
-
 }
