@@ -31,20 +31,10 @@ public class MainApplication extends Application {
         pane.getChildren().add(Configuration.createBackButton());
         Scene scene = new Scene(pane, SCENE_WIDTH, SCENE_HEIGHT);
 
-        SelectionHandler selectionHandler = new SelectionHandler(pane);
+        addSceneEvents(scene, pane);
+        scene.getStylesheets().add(Objects.requireNonNull(MainApplication.class
+                .getResource("style.css")).toExternalForm());
 
-        scene.addEventHandler(MouseEvent.MOUSE_PRESSED, event ->
-                selectionHandler.setInitialPoint(event.getX(), event.getY()));
-
-        scene.addEventHandler(MouseEvent.MOUSE_DRAGGED, event ->
-                selectionHandler.makeSelection(event.getX(), event.getY()));
-
-        scene.addEventHandler(MouseEvent.MOUSE_RELEASED, _ ->
-                selectionHandler.deleteSelectionRectangle());
-
-        scene.getStylesheets().add(
-                Objects.requireNonNull(MainApplication.class.getResource("style.css")).toExternalForm()
-        );
         stage.setScene(scene);
         stage.setTitle(STAGE_TITLE);
         stage.setResizable(false);
@@ -61,7 +51,18 @@ public class MainApplication extends Application {
 
         ComplexNumber topRightPoint = setBuilder.computeBorderComplexNumber(rightBottom,
                 Configuration.WORK_AREA_WIDTH, Configuration.WORK_AREA_HEIGHT);
-
         setBuilder.build(image, bottomLeftPoint, topRightPoint);
+    }
+
+    public void addSceneEvents(Scene scene, Pane pane) {
+        SelectionHandler selectionHandler = new SelectionHandler(pane);
+
+        scene.addEventHandler(MouseEvent.MOUSE_PRESSED, event ->
+                selectionHandler.setInitialPoint(event.getX(), event.getY()));
+        scene.addEventHandler(MouseEvent.MOUSE_DRAGGED, event ->
+                selectionHandler.makeSelection(event.getX(), event.getY()));
+        scene.addEventHandler(MouseEvent.MOUSE_RELEASED, _ ->
+                selectionHandler.deleteSelectionRectangle());
+
     }
 }
