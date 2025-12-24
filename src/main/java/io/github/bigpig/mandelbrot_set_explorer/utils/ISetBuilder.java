@@ -2,7 +2,7 @@ package io.github.bigpig.mandelbrot_set_explorer.utils;
 
 import javafx.scene.image.WritableImage;
 
-public interface SetBuilder {
+public interface ISetBuilder {
 
     ComplexNumber bottomLeftPoint = new ComplexNumber(-2.0, -1.5);
     ComplexNumber topRightPoint = new ComplexNumber(1.0, 1.5);

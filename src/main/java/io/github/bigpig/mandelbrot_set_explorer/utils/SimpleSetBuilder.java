@@ -4,7 +4,7 @@ import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 
-public class SimpleSetBuilder implements SetBuilder {
+public class SimpleSetBuilder implements ISetBuilder {
 
     private static final double ESCAPE_RADIUS_SQUARED = 4.0;
     private static final int SUPER_SAMPLING_FACTOR = 2;
