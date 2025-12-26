@@ -9,7 +9,7 @@ public interface ISetBuilder {
 
     void build(WritableImage image, ComplexNumber topLeft, ComplexNumber bottomRight);
 
-    default ComplexNumber computeBorderComplexNumber(Point point, int width, int height) {
+    static ComplexNumber computeBorderComplexNumber(Point point, int width, int height) {
         double cx = bottomLeftPoint.getX() + (topRightPoint.getX() - bottomLeftPoint.getX()) * point.getX() / width;
         double cy = topRightPoint.getY() - (topRightPoint.getY() - bottomLeftPoint.getY()) * point.getY() / height;
         return new ComplexNumber(cx, cy);

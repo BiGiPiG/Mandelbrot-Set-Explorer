@@ -25,13 +25,23 @@ public class MainApplication extends Application {
     public void start(Stage stage) {
         Pane pane = new Pane();
         WritableImage fractalImage = new WritableImage(Configuration.WORK_AREA_WIDTH, Configuration.WORK_AREA_HEIGHT);
-        printFractal(fractalImage);
+
+        Point leftTop = new Point(0, 0);
+        Point rightBottom = new Point(500, 500);
+
+        ComplexNumber bottomLeftPoint = ISetBuilder.computeBorderComplexNumber(leftTop,
+                Configuration.WORK_AREA_WIDTH, Configuration.WORK_AREA_HEIGHT);
+
+        ComplexNumber topRightPoint = ISetBuilder.computeBorderComplexNumber(rightBottom,
+                Configuration.WORK_AREA_WIDTH, Configuration.WORK_AREA_HEIGHT);
+        printFractal(fractalImage, bottomLeftPoint, topRightPoint);
+
         ImageView workArea = Configuration.createWorkArea(fractalImage);
         pane.getChildren().add(workArea);
         pane.getChildren().add(Configuration.createBackButton());
         Scene scene = new Scene(pane, SCENE_WIDTH, SCENE_HEIGHT);
 
-        addSceneEvents(scene, pane);
+        addSceneEvents(scene, pane, fractalImage);
         scene.getStylesheets().add(Objects.requireNonNull(MainApplication.class
                 .getResource("style.css")).toExternalForm());
 
@@ -41,28 +51,30 @@ public class MainApplication extends Application {
         stage.show();
     }
 
-    public static void printFractal(WritableImage image) {
-        Point leftTop = new Point(0, 0);
-        Point rightBottom = new Point(500, 500);
+    public static void printFractal(WritableImage image, ComplexNumber leftBottom, ComplexNumber rightTop) {
+
         ISetBuilder setBuilder = new SimpleSetBuilder(Configuration.WORK_AREA_WIDTH, Configuration.WORK_AREA_HEIGHT, 1000);
-
-        ComplexNumber bottomLeftPoint = setBuilder.computeBorderComplexNumber(leftTop,
-                Configuration.WORK_AREA_WIDTH, Configuration.WORK_AREA_HEIGHT);
-
-        ComplexNumber topRightPoint = setBuilder.computeBorderComplexNumber(rightBottom,
-                Configuration.WORK_AREA_WIDTH, Configuration.WORK_AREA_HEIGHT);
-        setBuilder.build(image, bottomLeftPoint, topRightPoint);
+        setBuilder.build(image, leftBottom, rightTop);
     }
 
-    public void addSceneEvents(Scene scene, Pane pane) {
+    public void addSceneEvents(Scene scene, Pane pane, WritableImage image) {
         SelectionHandler selectionHandler = new SelectionHandler(pane);
 
         scene.addEventHandler(MouseEvent.MOUSE_PRESSED, event ->
                 selectionHandler.setInitialPoint(event.getX(), event.getY()));
         scene.addEventHandler(MouseEvent.MOUSE_DRAGGED, event ->
                 selectionHandler.makeSelection(event.getX(), event.getY()));
-        scene.addEventHandler(MouseEvent.MOUSE_RELEASED, _ ->
-                selectionHandler.deleteSelectionRectangle());
+        scene.addEventHandler(MouseEvent.MOUSE_RELEASED, event -> {
+            System.out.println(selectionHandler.getTopLeftCorner());
+            System.out.println(selectionHandler.getBottomRightCorner());
+            ComplexNumber topLeft = ISetBuilder.computeBorderComplexNumber(selectionHandler.getTopLeftCorner(), 500, 500);
+            ComplexNumber bottomRight = ISetBuilder.computeBorderComplexNumber(selectionHandler.getBottomRightCorner(), 500, 500);
 
+            ComplexNumber newBottomLeft = new ComplexNumber(topLeft.getX(), bottomRight.getY());
+            ComplexNumber newTopRight = new ComplexNumber(bottomRight.getX(), topLeft.getY());
+
+            selectionHandler.deleteSelectionRectangle();
+            printFractal(image, newBottomLeft, newTopRight);
+        });
     }
 }

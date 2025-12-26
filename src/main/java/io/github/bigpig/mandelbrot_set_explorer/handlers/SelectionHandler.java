@@ -1,5 +1,6 @@
 package io.github.bigpig.mandelbrot_set_explorer.handlers;
 
+import io.github.bigpig.mandelbrot_set_explorer.utils.Point;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -16,6 +17,9 @@ public class SelectionHandler {
 
     private double initialX;
     private double initialY;
+
+    private Point topLeftCorner;
+    private Point bottomRightCorner;
 
     public SelectionHandler(Pane pane) {
         this.pane = pane;
@@ -58,6 +62,9 @@ public class SelectionHandler {
         selection.setFill(Color.AQUA.deriveColor(0, 1, 1, 0.3));
         selection.setStroke(Color.AQUA);
         pane.getChildren().add(selection);
+
+        this.topLeftCorner = new Point(x, y);
+        this.bottomRightCorner = new Point(x + length, y + length);
     }
 
     private void updateSelectionRectangle(double x, double y, double length) {
@@ -65,6 +72,9 @@ public class SelectionHandler {
         selection.setY(y);
         selection.setWidth(length);
         selection.setHeight(length);
+
+        this.topLeftCorner = new Point(x, y);
+        this.bottomRightCorner = new Point(x + length, y + length);
     }
 
     public void deleteSelectionRectangle() {
@@ -79,6 +89,9 @@ public class SelectionHandler {
         return Math.max(min, Math.min(value, max));
     }
 
-//    public double getInitialX() { return initialX; }
-//    public double getInitialY() { return initialY; }
+    public double getInitialX() { return initialX; }
+    public double getInitialY() { return initialY; }
+
+    public Point getTopLeftCorner() { return topLeftCorner; }
+    public Point getBottomRightCorner() { return bottomRightCorner; }
 }
