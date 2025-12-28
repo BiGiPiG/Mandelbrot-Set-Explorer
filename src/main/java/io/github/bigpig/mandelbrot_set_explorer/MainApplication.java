@@ -30,9 +30,8 @@ public class MainApplication extends Application {
         ImageView workArea = Configuration.createWorkArea(fractalImage);
         pane.getChildren().add(workArea);
         pane.getChildren().add(Configuration.createBackButton());
-        Scene scene = new Scene(pane, SCENE_WIDTH, SCENE_HEIGHT);
+        Scene scene = new Scene(createRootPane(), SCENE_WIDTH, SCENE_HEIGHT);
 
-        addSceneEvents(scene, pane);
         scene.getStylesheets().add(Objects.requireNonNull(MainApplication.class
                 .getResource("style.css")).toExternalForm());
 
@@ -42,14 +41,14 @@ public class MainApplication extends Application {
         stage.show();
     }
 
-    public void addSceneEvents(Scene scene, Pane pane) {
-        SelectionHandler selectionHandler = new SelectionHandler(pane);
+    public void setupFractalInteraction(ImageView workArea) {
+        SelectionHandler selectionHandler = new SelectionHandler((Pane) workArea.getParent());
 
-        scene.addEventHandler(MouseEvent.MOUSE_PRESSED, event ->
+        workArea.addEventHandler(MouseEvent.MOUSE_PRESSED, event ->
                 selectionHandler.setInitialPoint(event.getX(), event.getY()));
-        scene.addEventHandler(MouseEvent.MOUSE_DRAGGED, event ->
+        workArea.addEventHandler(MouseEvent.MOUSE_DRAGGED, event ->
                 selectionHandler.makeSelection(event.getX(), event.getY()));
-        scene.addEventHandler(MouseEvent.MOUSE_RELEASED, _ -> {
+        workArea.addEventHandler(MouseEvent.MOUSE_RELEASED, _ -> {
             Point topLeftCorner = selectionHandler.getTopLeftCorner();
             Point bottomRightCorner = selectionHandler.getBottomRightCorner();
             if (topLeftCorner != null && !topLeftCorner.equals(bottomRightCorner)) {
@@ -59,5 +58,13 @@ public class MainApplication extends Application {
             }
             selectionHandler.deleteSelectionRectangle();
         });
+    }
+
+    private Pane createRootPane() {
+        Pane pane = new Pane();
+        ImageView workArea = Configuration.createWorkArea(fractalImage);
+        pane.getChildren().addAll(workArea, Configuration.createBackButton());
+        setupFractalInteraction(workArea);
+        return pane;
     }
 }
