@@ -17,11 +17,23 @@ public class SimpleSetBuilder implements ISetBuilder {
         this.width = width;
         this.height = height;
         this.maxIterCount = maxIterCount;
-
     }
 
+    /**
+     * Принимает:
+     * - topLeftPoint    = (minRe, maxIm) — верхний левый угол фрактала
+     * - bottomRightPoint = (maxRe, minIm) — нижний правый угол фрактала
+     */
     @Override
-    public void build(WritableImage image, ComplexNumber bottomLeftPoint, ComplexNumber topRightPoint) {
+    public void build(WritableImage image, ComplexNumber topLeftPoint, ComplexNumber bottomRightPoint) {
+        ComplexNumber bottomLeftPoint = new ComplexNumber(
+                topLeftPoint.getX(),
+                bottomRightPoint.getY()
+        );
+        ComplexNumber topRightPoint = new ComplexNumber(
+                bottomRightPoint.getX(),
+                topLeftPoint.getY()
+        );
 
         PixelWriter writer = image.getPixelWriter();
         for (int y = 0; y < height; y++) {
@@ -29,7 +41,10 @@ public class SimpleSetBuilder implements ISetBuilder {
                 double rSum = 0, gSum = 0, bSum = 0;
                 for (int sy = 0; sy < SUPER_SAMPLING_FACTOR; sy++) {
                     for (int sx = 0; sx < SUPER_SAMPLING_FACTOR; sx++) {
-                        Point pixel = new Point(x + (sx + 0.5) / SUPER_SAMPLING_FACTOR, y + (sy + 0.5) / SUPER_SAMPLING_FACTOR);
+                        Point pixel = new Point(
+                                x + (sx + 0.5) / SUPER_SAMPLING_FACTOR,
+                                y + (sy + 0.5) / SUPER_SAMPLING_FACTOR
+                        );
                         ComplexNumber c = pointToComplexNumber(pixel, bottomLeftPoint, topRightPoint);
 
                         int iter = getIter(maxIterCount, c);
@@ -47,7 +62,6 @@ public class SimpleSetBuilder implements ISetBuilder {
                         gSum / sampleCount,
                         bSum / sampleCount
                 );
-
                 writer.setColor(x, y, avgColor);
             }
         }
@@ -57,22 +71,25 @@ public class SimpleSetBuilder implements ISetBuilder {
         ComplexNumber z = new ComplexNumber(0.0, 0.0);
         int iter = 0;
         while (z.getX() * z.getX() + z.getY() * z.getY() <= ESCAPE_RADIUS_SQUARED && iter < maxIter) {
-            double newX = z.getX();
-            double newY = z.getY();
-            z.setX(newX * newX - newY * newY + c.getX());
-            z.setY(2 * newX * newY + c.getY());
+            double x = z.getX();
+            double y = z.getY();
+            z.setX(x * x - y * y + c.getX());
+            z.setY(2 * x * y + c.getY());
             iter++;
         }
         return iter;
     }
 
-    public ComplexNumber pointToComplexNumber(Point point, ComplexNumber bottomLeftPoint, ComplexNumber topRightPoint) {
-        double cx = bottomLeftPoint.getX() + (topRightPoint.getX() - bottomLeftPoint.getX()) * point.getX() / width;
-        double cy = topRightPoint.getY() - (topRightPoint.getY() - bottomLeftPoint.getY()) * point.getY() / height;
-        return new ComplexNumber(cx, cy);
+    /**
+     * Ожидает bottomLeft = (minRe, minIm), topRight = (maxRe, maxIm)
+     */
+    private ComplexNumber pointToComplexNumber(Point point, ComplexNumber bottomLeft, ComplexNumber topRight) {
+        double re = bottomLeft.getX() + (topRight.getX() - bottomLeft.getX()) * point.getX() / width;
+        double im = topRight.getY() - (topRight.getY() - bottomLeft.getY()) * point.getY() / height;
+        return new ComplexNumber(re, im);
     }
 
-    public Color computeColor(int iterCount) {
+    private Color computeColor(int iterCount) {
         if (iterCount == maxIterCount) {
             return Color.BLACK;
         } else {

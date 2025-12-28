@@ -2,10 +2,7 @@ package io.github.bigpig.mandelbrot_set_explorer;
 
 import io.github.bigpig.mandelbrot_set_explorer.Configuration.Configuration;
 import io.github.bigpig.mandelbrot_set_explorer.handlers.SelectionHandler;
-import io.github.bigpig.mandelbrot_set_explorer.utils.ComplexNumber;
-import io.github.bigpig.mandelbrot_set_explorer.utils.ISetBuilder;
-import io.github.bigpig.mandelbrot_set_explorer.utils.Point;
-import io.github.bigpig.mandelbrot_set_explorer.utils.SimpleSetBuilder;
+import io.github.bigpig.mandelbrot_set_explorer.utils.*;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.image.ImageView;
@@ -20,28 +17,22 @@ public class MainApplication extends Application {
     public static final int SCENE_WIDTH = 520;
     public static final int SCENE_HEIGHT = 580;
     public static final String STAGE_TITLE = "Mandelbrot Set Explorer";
+    public WritableImage fractalImage;
+    private SetRenderer setRenderer;
 
     @Override
     public void start(Stage stage) {
         Pane pane = new Pane();
-        WritableImage fractalImage = new WritableImage(Configuration.WORK_AREA_WIDTH, Configuration.WORK_AREA_HEIGHT);
-
-        Point leftTop = new Point(0, 0);
-        Point rightBottom = new Point(500, 500);
-
-        ComplexNumber bottomLeftPoint = ISetBuilder.computeBorderComplexNumber(leftTop,
-                Configuration.WORK_AREA_WIDTH, Configuration.WORK_AREA_HEIGHT);
-
-        ComplexNumber topRightPoint = ISetBuilder.computeBorderComplexNumber(rightBottom,
-                Configuration.WORK_AREA_WIDTH, Configuration.WORK_AREA_HEIGHT);
-        printFractal(fractalImage, bottomLeftPoint, topRightPoint);
+        this.fractalImage = new WritableImage(Configuration.WORK_AREA_WIDTH, Configuration.WORK_AREA_HEIGHT);
+        this.setRenderer = new SetRenderer(Configuration.WORK_AREA_WIDTH, Configuration.WORK_AREA_HEIGHT, Configuration.MAX_ITER_COUNT);
+        setRenderer.render(fractalImage);
 
         ImageView workArea = Configuration.createWorkArea(fractalImage);
         pane.getChildren().add(workArea);
         pane.getChildren().add(Configuration.createBackButton());
         Scene scene = new Scene(pane, SCENE_WIDTH, SCENE_HEIGHT);
 
-        addSceneEvents(scene, pane, fractalImage);
+        addSceneEvents(scene, pane);
         scene.getStylesheets().add(Objects.requireNonNull(MainApplication.class
                 .getResource("style.css")).toExternalForm());
 
@@ -51,30 +42,22 @@ public class MainApplication extends Application {
         stage.show();
     }
 
-    public static void printFractal(WritableImage image, ComplexNumber leftBottom, ComplexNumber rightTop) {
-
-        ISetBuilder setBuilder = new SimpleSetBuilder(Configuration.WORK_AREA_WIDTH, Configuration.WORK_AREA_HEIGHT, 1000);
-        setBuilder.build(image, leftBottom, rightTop);
-    }
-
-    public void addSceneEvents(Scene scene, Pane pane, WritableImage image) {
+    public void addSceneEvents(Scene scene, Pane pane) {
         SelectionHandler selectionHandler = new SelectionHandler(pane);
 
         scene.addEventHandler(MouseEvent.MOUSE_PRESSED, event ->
                 selectionHandler.setInitialPoint(event.getX(), event.getY()));
         scene.addEventHandler(MouseEvent.MOUSE_DRAGGED, event ->
                 selectionHandler.makeSelection(event.getX(), event.getY()));
-        scene.addEventHandler(MouseEvent.MOUSE_RELEASED, event -> {
-            System.out.println(selectionHandler.getTopLeftCorner());
-            System.out.println(selectionHandler.getBottomRightCorner());
-            ComplexNumber topLeft = ISetBuilder.computeBorderComplexNumber(selectionHandler.getTopLeftCorner(), 500, 500);
-            ComplexNumber bottomRight = ISetBuilder.computeBorderComplexNumber(selectionHandler.getBottomRightCorner(), 500, 500);
-
-            ComplexNumber newBottomLeft = new ComplexNumber(topLeft.getX(), bottomRight.getY());
-            ComplexNumber newTopRight = new ComplexNumber(bottomRight.getX(), topLeft.getY());
-
+        scene.addEventHandler(MouseEvent.MOUSE_RELEASED, _ -> {
+            Point topLeftCorner = selectionHandler.getTopLeftCorner();
+            Point bottomRightCorner = selectionHandler.getBottomRightCorner();
+            if (topLeftCorner != null && !topLeftCorner.equals(bottomRightCorner)) {
+                System.out.println("zoom");
+                setRenderer.zoomTo(topLeftCorner, bottomRightCorner);
+                setRenderer.render(fractalImage);
+            }
             selectionHandler.deleteSelectionRectangle();
-            printFractal(image, newBottomLeft, newTopRight);
         });
     }
 }
