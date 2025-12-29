@@ -89,12 +89,6 @@ public class SelectionHandler {
         return Math.max(min, Math.min(value, max));
     }
 
-    public double getInitialX() { return initialX; }
-    public double getInitialY() { return initialY; }
-
-    public Point getTopLeftCorner() { return topLeftCorner; }
-    public Point getBottomRightCorner() { return bottomRightCorner; }
-
     public Point getBottomLeftCorner() {
         return new Point(topLeftCorner.getX(), bottomRightCorner.getY());
     }
