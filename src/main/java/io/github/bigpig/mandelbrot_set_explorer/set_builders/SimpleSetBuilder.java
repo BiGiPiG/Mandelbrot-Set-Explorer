@@ -1,5 +1,6 @@
 package io.github.bigpig.mandelbrot_set_explorer.set_builders;
 
+import io.github.bigpig.mandelbrot_set_explorer.utils.BuilderUtils;
 import io.github.bigpig.mandelbrot_set_explorer.utils.ComplexNumber;
 import io.github.bigpig.mandelbrot_set_explorer.utils.Point;
 import javafx.scene.image.PixelWriter;
@@ -8,17 +9,18 @@ import javafx.scene.paint.Color;
 
 public class SimpleSetBuilder implements ISetBuilder {
 
-    private static final double ESCAPE_RADIUS_SQUARED = 4.0;
     private static final int SUPER_SAMPLING_FACTOR = 2;
 
     private final int width;
     private final int height;
     private final int maxIterCount;
+    private final BuilderUtils builderUtils;
 
-    public SimpleSetBuilder(int width, int height, int maxIterCount) {
+    public SimpleSetBuilder(int width, int height, int maxIterCount, BuilderUtils builderUtils) {
         this.width = width;
         this.height = height;
         this.maxIterCount = maxIterCount;
+        this.builderUtils = builderUtils;
     }
 
     @Override
@@ -34,10 +36,10 @@ public class SimpleSetBuilder implements ISetBuilder {
                                 x + (sx + 0.5) / SUPER_SAMPLING_FACTOR,
                                 y + (sy + 0.5) / SUPER_SAMPLING_FACTOR
                         );
-                        ComplexNumber c = pointToComplexNumber(pixel, bottomLeftPoint, topRightPoint);
+                        ComplexNumber c = builderUtils.pointToComplexNumber(pixel, bottomLeftPoint, topRightPoint);
 
-                        int iter = getIter(maxIterCount, c);
-                        Color color = computeColor(iter);
+                        int iter = builderUtils.getIter(maxIterCount, c);
+                        Color color = builderUtils.computeColor(iter, maxIterCount);
 
                         rSum += color.getRed();
                         gSum += color.getGreen();
@@ -53,41 +55,6 @@ public class SimpleSetBuilder implements ISetBuilder {
                 );
                 writer.setColor(x, y, avgColor);
             }
-        }
-    }
-
-    private static int getIter(int maxIter, ComplexNumber c) {
-        ComplexNumber z = new ComplexNumber(0.0, 0.0);
-        int iter = 0;
-        while (z.getX() * z.getX() + z.getY() * z.getY() <= ESCAPE_RADIUS_SQUARED && iter < maxIter) {
-            double x = z.getX();
-            double y = z.getY();
-            z.setX(x * x - y * y + c.getX());
-            z.setY(2 * x * y + c.getY());
-            iter++;
-        }
-        return iter;
-    }
-
-    private ComplexNumber pointToComplexNumber(Point point, ComplexNumber bottomLeft, ComplexNumber topRight) {
-        double re = bottomLeft.getX() + (topRight.getX() - bottomLeft.getX()) * point.getX() / width;
-        double im = topRight.getY() - (topRight.getY() - bottomLeft.getY()) * point.getY() / height;
-        return new ComplexNumber(re, im);
-    }
-
-    private Color computeColor(int iterCount) {
-        if (iterCount == maxIterCount) {
-            return Color.BLACK;
-        } else {
-            double t = (double) iterCount / maxIterCount;
-            double r = 9 * (1 - t) * t * t * t;
-            double g = 15 * (1 - t) * (1 - t) * t * t;
-            double b = 8.5 * (1 - t) * (1 - t) * (1 - t) * t;
-            return Color.rgb(
-                    (int) Math.min(255, r * 255),
-                    (int) Math.min(255, g * 255),
-                    (int) Math.min(255, b * 255)
-            );
         }
     }
 }
