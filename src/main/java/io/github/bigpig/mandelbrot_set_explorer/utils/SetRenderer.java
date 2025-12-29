@@ -1,6 +1,8 @@
 package io.github.bigpig.mandelbrot_set_explorer.utils;
 
 import io.github.bigpig.mandelbrot_set_explorer.Configuration.Configuration;
+import io.github.bigpig.mandelbrot_set_explorer.set_builders.ISetBuilder;
+import io.github.bigpig.mandelbrot_set_explorer.set_builders.SimpleSetBuilder;
 import javafx.scene.image.WritableImage;
 
 public class SetRenderer {

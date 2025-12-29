@@ -1,5 +1,7 @@
-package io.github.bigpig.mandelbrot_set_explorer.utils;
+package io.github.bigpig.mandelbrot_set_explorer.set_builders;
 
+import io.github.bigpig.mandelbrot_set_explorer.utils.ComplexNumber;
+import io.github.bigpig.mandelbrot_set_explorer.utils.Point;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
