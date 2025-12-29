@@ -94,4 +94,12 @@ public class SelectionHandler {
 
     public Point getTopLeftCorner() { return topLeftCorner; }
     public Point getBottomRightCorner() { return bottomRightCorner; }
+
+    public Point getBottomLeftCorner() {
+        return new Point(topLeftCorner.getX(), bottomRightCorner.getY());
+    }
+
+    public Point getTopRightCorner() {
+        return new Point(bottomRightCorner.getX(), topLeftCorner.getY());
+    }
 }

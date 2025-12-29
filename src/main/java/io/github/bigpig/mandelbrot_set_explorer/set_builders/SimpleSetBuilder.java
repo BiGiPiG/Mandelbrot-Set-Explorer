@@ -21,21 +21,8 @@ public class SimpleSetBuilder implements ISetBuilder {
         this.maxIterCount = maxIterCount;
     }
 
-    /**
-     * Принимает:
-     * - topLeftPoint    = (minRe, maxIm) — верхний левый угол фрактала
-     * - bottomRightPoint = (maxRe, minIm) — нижний правый угол фрактала
-     */
     @Override
-    public void build(WritableImage image, ComplexNumber topLeftPoint, ComplexNumber bottomRightPoint) {
-        ComplexNumber bottomLeftPoint = new ComplexNumber(
-                topLeftPoint.getX(),
-                bottomRightPoint.getY()
-        );
-        ComplexNumber topRightPoint = new ComplexNumber(
-                bottomRightPoint.getX(),
-                topLeftPoint.getY()
-        );
+    public void build(WritableImage image, ComplexNumber bottomLeftPoint, ComplexNumber topRightPoint) {
 
         PixelWriter writer = image.getPixelWriter();
         for (int y = 0; y < height; y++) {
@@ -82,9 +69,6 @@ public class SimpleSetBuilder implements ISetBuilder {
         return iter;
     }
 
-    /**
-     * Ожидает bottomLeft = (minRe, minIm), topRight = (maxRe, maxIm)
-     */
     private ComplexNumber pointToComplexNumber(Point point, ComplexNumber bottomLeft, ComplexNumber topRight) {
         double re = bottomLeft.getX() + (topRight.getX() - bottomLeft.getX()) * point.getX() / width;
         double im = topRight.getY() - (topRight.getY() - bottomLeft.getY()) * point.getY() / height;

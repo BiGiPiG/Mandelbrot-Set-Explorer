@@ -49,11 +49,11 @@ public class MainApplication extends Application {
         workArea.addEventHandler(MouseEvent.MOUSE_DRAGGED, event ->
                 selectionHandler.makeSelection(event.getX(), event.getY()));
         workArea.addEventHandler(MouseEvent.MOUSE_RELEASED, _ -> {
-            Point topLeftCorner = selectionHandler.getTopLeftCorner();
-            Point bottomRightCorner = selectionHandler.getBottomRightCorner();
-            if (topLeftCorner != null && !topLeftCorner.equals(bottomRightCorner)) {
+            Point bottomLeftCorner = selectionHandler.getBottomLeftCorner();
+            Point topRightCorner = selectionHandler.getTopRightCorner();
+            if (bottomLeftCorner != null && !bottomLeftCorner.equals(topRightCorner)) {
                 System.out.println("zoom");
-                setRenderer.zoomTo(topLeftCorner, bottomRightCorner);
+                setRenderer.zoomTo(bottomLeftCorner, topRightCorner);
                 setRenderer.render(fractalImage);
             }
             selectionHandler.deleteSelectionRectangle();

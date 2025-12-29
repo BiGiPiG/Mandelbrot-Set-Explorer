@@ -7,8 +7,8 @@ import javafx.scene.image.WritableImage;
 
 public class SetRenderer {
 
-    private ComplexNumber currentTopLeft;
-    private ComplexNumber currentBottomRight;
+    private ComplexNumber currentBottomLeft;
+    private ComplexNumber currentTopRight;
     private final int width, height;
     private final int maxIter;
 
@@ -20,25 +20,25 @@ public class SetRenderer {
     }
 
     public void reset() {
-        this.currentTopLeft = Configuration.INITIAL_TOP_LEFT;
-        this.currentBottomRight = Configuration.INITIAL_BOTTOM_RIGHT;
+        this.currentBottomLeft = Configuration.INITIAL_BOTTOM_LEFT;
+        this.currentTopRight = Configuration.INITIAL_TOP_RIGHT;
     }
 
     public void render(WritableImage area) {
         ISetBuilder builder = new SimpleSetBuilder(width, height, maxIter);
-        builder.build(area, currentTopLeft, currentBottomRight);
+        builder.build(area, currentBottomLeft, currentTopRight);
     }
 
-    public void zoomTo(Point pTopLeft, Point pBottomRight) {
-        ComplexNumber topLeft = computeComplexNumber(pTopLeft);
-        ComplexNumber bottomRight = computeComplexNumber(pBottomRight);
-        this.currentTopLeft = topLeft;
-        this.currentBottomRight = bottomRight;
+    public void zoomTo(Point pBottomLeft, Point pTopRight) {
+        ComplexNumber bottomLeft = computeComplexNumber(pBottomLeft);
+        ComplexNumber topRight = computeComplexNumber(pTopRight);
+        this.currentBottomLeft = bottomLeft;
+        this.currentTopRight = topRight;
     }
 
     ComplexNumber computeComplexNumber(Point point) {
-        double re = currentTopLeft.getX() + (currentBottomRight.getX() - currentTopLeft.getX()) * point.getX() / width;
-        double im = currentTopLeft.getY() - (currentTopLeft.getY() - currentBottomRight.getY()) * point.getY() / height;
+        double re = currentBottomLeft.getX() + (currentTopRight.getX() - currentBottomLeft.getX()) * point.getX() / width;
+        double im = currentTopRight.getY() - (currentTopRight.getY() - currentBottomLeft.getY()) * point.getY() / height;
         return new ComplexNumber(re, im);
     }
 }

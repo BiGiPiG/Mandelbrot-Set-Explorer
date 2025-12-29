@@ -16,8 +16,8 @@ public class Configuration {
     public static final int BUTTON_Y_SHIFT = 510;
     public static final int MAX_ITER_COUNT = 100;
 
-    public static final ComplexNumber INITIAL_TOP_LEFT = new ComplexNumber(-2.0, 1.5);
-    public static final ComplexNumber INITIAL_BOTTOM_RIGHT = new ComplexNumber(1.0, -1.5);
+    public static final ComplexNumber INITIAL_BOTTOM_LEFT = new ComplexNumber(-2.0, -1.5);
+    public static final ComplexNumber INITIAL_TOP_RIGHT = new ComplexNumber(1.0, 1.5);
 
     public static ImageView createWorkArea(WritableImage image) {
         ImageView imageView = new ImageView(image);
