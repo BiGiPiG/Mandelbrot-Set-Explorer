@@ -48,7 +48,6 @@ public class MainApplication extends Application {
             Point bottomLeftCorner = selectionHandler.getBottomLeftCorner();
             Point topRightCorner = selectionHandler.getTopRightCorner();
             if (bottomLeftCorner != null && !bottomLeftCorner.equals(topRightCorner)) {
-                System.out.println("zoom");
                 setRenderer.zoomTo(bottomLeftCorner, topRightCorner);
                 setRenderer.render(fractalImage);
             }
