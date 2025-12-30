@@ -14,7 +14,7 @@ public class Configuration {
     public static final int BUTTON_WIDTH = 100;
     public static final int BUTTON_HEIGHT = 30;
     public static final int BUTTON_Y_SHIFT = 510;
-    public static final int MAX_ITER_COUNT = 100;
+    public static final int MAX_ITER_COUNT = 5000;
 
     public static final ComplexNumber INITIAL_BOTTOM_LEFT = new ComplexNumber(-2.0, -1.5);
     public static final ComplexNumber INITIAL_TOP_RIGHT = new ComplexNumber(1.0, 1.5);
@@ -26,7 +26,7 @@ public class Configuration {
         return imageView;
     }
 
-    public static Button createBackButton() {
+    public static Button createBackButton(Runnable operation) {
         Button button = new Button();
         button.setText("Back");
         button.setPrefWidth(BUTTON_WIDTH);
@@ -34,7 +34,7 @@ public class Configuration {
         button.setLayoutY(BUTTON_Y_SHIFT + (MainApplication.SCENE_HEIGHT - BUTTON_Y_SHIFT - BUTTON_HEIGHT) / 2.0);
         button.setLayoutX((MainApplication.SCENE_WIDTH - BUTTON_WIDTH) / 2.0);
         button.getStyleClass().add("back-button");
-        button.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> System.out.println("Step back " + event.toString()));
+        button.addEventHandler(MouseEvent.MOUSE_CLICKED, _ -> operation.run());
         return button;
     }
 }

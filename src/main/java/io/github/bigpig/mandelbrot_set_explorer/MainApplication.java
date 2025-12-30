@@ -22,14 +22,10 @@ public class MainApplication extends Application {
 
     @Override
     public void start(Stage stage) {
-        Pane pane = new Pane();
         this.fractalImage = new WritableImage(Configuration.WORK_AREA_WIDTH, Configuration.WORK_AREA_HEIGHT);
         this.setRenderer = new SetRenderer(Configuration.WORK_AREA_WIDTH, Configuration.WORK_AREA_HEIGHT, Configuration.MAX_ITER_COUNT);
         setRenderer.render(fractalImage);
 
-        ImageView workArea = Configuration.createWorkArea(fractalImage);
-        pane.getChildren().add(workArea);
-        pane.getChildren().add(Configuration.createBackButton());
         Scene scene = new Scene(createRootPane(), SCENE_WIDTH, SCENE_HEIGHT);
 
         scene.getStylesheets().add(Objects.requireNonNull(MainApplication.class
@@ -63,7 +59,10 @@ public class MainApplication extends Application {
     private Pane createRootPane() {
         Pane pane = new Pane();
         ImageView workArea = Configuration.createWorkArea(fractalImage);
-        pane.getChildren().addAll(workArea, Configuration.createBackButton());
+        pane.getChildren().addAll(workArea, Configuration.createBackButton(() -> {
+            setRenderer.setOldBountyPoints();
+            setRenderer.render(fractalImage);
+        }));
         setupFractalInteraction(workArea);
         return pane;
     }
