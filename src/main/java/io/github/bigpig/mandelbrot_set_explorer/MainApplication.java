@@ -60,8 +60,9 @@ public class MainApplication extends Application {
         Pane pane = new Pane();
         ImageView workArea = Configuration.createWorkArea(fractalImage);
         pane.getChildren().addAll(workArea, Configuration.createBackButton(() -> {
-            setRenderer.setOldBountyPoints();
-            setRenderer.render(fractalImage);
+            if (setRenderer.setOldBountyPoints()) {
+                setRenderer.render(fractalImage);
+            }
         }));
         setupFractalInteraction(workArea);
         return pane;

@@ -54,8 +54,10 @@ public class SetRenderer {
         this.currentTopRight = topRight;
     }
 
-    public void setOldBountyPoints() {
+    public boolean setOldBountyPoints() {
+        if (steps.isEmpty()) return false;
         this.currentTopRight = steps.pop();
         this.currentBottomLeft = steps.pop();
+        return true;
     }
 }
