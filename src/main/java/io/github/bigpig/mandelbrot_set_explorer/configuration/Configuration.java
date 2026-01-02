@@ -1,4 +1,4 @@
-package io.github.bigpig.mandelbrot_set_explorer.Configuration;
+package io.github.bigpig.mandelbrot_set_explorer.configuration;
 
 import io.github.bigpig.mandelbrot_set_explorer.MainApplication;
 import io.github.bigpig.mandelbrot_set_explorer.utils.ComplexNumber;

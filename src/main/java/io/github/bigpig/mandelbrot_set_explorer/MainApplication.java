@@ -1,6 +1,6 @@
 package io.github.bigpig.mandelbrot_set_explorer;
 
-import io.github.bigpig.mandelbrot_set_explorer.Configuration.Configuration;
+import io.github.bigpig.mandelbrot_set_explorer.configuration.Configuration;
 import io.github.bigpig.mandelbrot_set_explorer.handlers.SelectionHandler;
 import io.github.bigpig.mandelbrot_set_explorer.utils.*;
 import javafx.application.Application;

@@ -1,10 +1,8 @@
 package io.github.bigpig.mandelbrot_set_explorer.utils;
 
-import io.github.bigpig.mandelbrot_set_explorer.Configuration.Configuration;
+import io.github.bigpig.mandelbrot_set_explorer.configuration.Configuration;
 import io.github.bigpig.mandelbrot_set_explorer.set_builders.ISetBuilder;
 import io.github.bigpig.mandelbrot_set_explorer.set_builders.MultiThreadSetBuilder;
-import io.github.bigpig.mandelbrot_set_explorer.set_builders.SimpleMultiThreadSetBuilder;
-import io.github.bigpig.mandelbrot_set_explorer.set_builders.SimpleSetBuilder;
 import javafx.scene.image.WritableImage;
 
 import java.util.ArrayDeque;
