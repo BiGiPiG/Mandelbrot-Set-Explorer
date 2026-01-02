@@ -6,6 +6,7 @@ import io.github.bigpig.mandelbrot_set_explorer.utils.*;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
@@ -16,6 +17,7 @@ import javafx.stage.Stage;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class MainApplication extends Application {
     public static final int SCENE_WIDTH = 520;
@@ -32,18 +34,31 @@ public class MainApplication extends Application {
     private SetRenderer setRenderer;
     private ProgressBar progressBar;
     private ImageView workArea;
+    private Label progressLabel;
+    private final AtomicInteger frameCount = new AtomicInteger(0);
 
     @Override
     public void start(Stage stage) {
+        initializeRendering();
+        Scene scene = createScene();
+        setupStage(stage, scene);
+        stage.show();
+    }
+
+    private void initializeRendering() {
         this.fractalImage = new WritableImage(Configuration.WORK_AREA_WIDTH, Configuration.WORK_AREA_HEIGHT);
         this.setRenderer = new SetRenderer(Configuration.WORK_AREA_WIDTH, Configuration.WORK_AREA_HEIGHT, Configuration.MAX_ITER_COUNT);
         render();
+    }
 
+    private Scene createScene() {
         Scene scene = new Scene(createRootPane(), SCENE_WIDTH, SCENE_HEIGHT);
-
         scene.getStylesheets().add(Objects.requireNonNull(MainApplication.class
                 .getResource("style.css")).toExternalForm());
+        return scene;
+    }
 
+    private void setupStage(Stage stage, Scene scene) {
         stage.setScene(scene);
         stage.setTitle(STAGE_TITLE);
         stage.setResizable(false);
@@ -74,15 +89,27 @@ public class MainApplication extends Application {
 
     private Pane createRootPane() {
         this.workArea = Configuration.createWorkArea(fractalImage);
-        setupFractalInteraction(workArea);
         progressBar = createProgressBar();
+        progressLabel = createProgressLabel();
 
         Pane pane = new Pane();
         pane.getChildren().addAll(workArea, Configuration.createBackButton(() -> {
             if (setRenderer.setOldBountyPoints()) render();
-        }), progressBar);
+        }), progressBar, progressLabel);
+
+        setupFractalInteraction(workArea);
 
         return pane;
+    }
+
+    private Label createProgressLabel() {
+        Label progressLabel = new Label("Rendering...");
+        progressLabel.setVisible(false);
+        progressLabel.setStyle("-fx-text-fill: white; -fx-font-weight: bold;");
+        progressLabel.setLayoutX(SCENE_WIDTH / 2.0 - 15);
+        progressLabel.setLayoutY(PROGRESS_BAR_Y + 5);
+        progressLabel.getStyleClass().add("progress-label");
+        return progressLabel;
     }
 
     private ProgressBar createProgressBar() {
@@ -99,16 +126,31 @@ public class MainApplication extends Application {
         Platform.runLater(() -> {
             workArea.setVisible(false);
             progressBar.setVisible(true);
+            progressLabel.setVisible(true);
+            progressLabel.setText("Rendering...");
         });
 
         new Thread(() -> {
             try {
                 setRenderer.renderFull(fractalImage, sharedThreadPool, progress ->
-                        Platform.runLater(() -> progressBar.setProgress(progress)));
+                        Platform.runLater(() -> {
+                            progressBar.setProgress(progress);
+                            int percent = (int) (progress * 100);
+                            int frame = frameCount.getAndIncrement() % 4;
+                            String dots = switch (frame) {
+                                case 1 -> ".";
+                                case 2 -> "..";
+                                case 3 -> "...";
+                                default -> "";
+                            };
+                            progressLabel.setText(String.format("%d%%%s", percent, dots));
+                        })
+                );
             } finally {
                 Platform.runLater(() -> {
                     progressBar.setVisible(false);
                     workArea.setVisible(true);
+                    progressLabel.setVisible(false);
                 });
             }
         }).start();

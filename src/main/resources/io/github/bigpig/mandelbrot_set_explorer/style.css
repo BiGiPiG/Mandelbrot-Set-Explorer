@@ -41,3 +41,10 @@
     -fx-background-insets: 1;
     -fx-background-radius: 5px;
 }
+
+.progress-label {
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-font-size: 12px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.5), 2, 0, 0, 1);
+}
