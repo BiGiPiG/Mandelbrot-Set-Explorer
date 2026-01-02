@@ -2,11 +2,14 @@ package io.github.bigpig.mandelbrot_set_explorer.utils;
 
 import io.github.bigpig.mandelbrot_set_explorer.Configuration.Configuration;
 import io.github.bigpig.mandelbrot_set_explorer.set_builders.ISetBuilder;
+import io.github.bigpig.mandelbrot_set_explorer.set_builders.MultiThreadSetBuilder;
 import io.github.bigpig.mandelbrot_set_explorer.set_builders.SimpleMultiThreadSetBuilder;
+import io.github.bigpig.mandelbrot_set_explorer.set_builders.SimpleSetBuilder;
 import javafx.scene.image.WritableImage;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.concurrent.ExecutorService;
 
 public class SetRenderer {
 
@@ -15,13 +18,20 @@ public class SetRenderer {
     private final int width, height;
     private final int maxIter;
     private final Deque<ComplexNumber> steps;
+    private final BuilderUtils builderUtils;
 
     public SetRenderer(int width, int height, int maxIter) {
         this.width = width;
         this.height = height;
         this.maxIter = maxIter;
+        this.builderUtils = new BuilderUtils(width, height);
         steps = new ArrayDeque<>();
         reset();
+    }
+
+    public void renderFull(WritableImage area, ExecutorService threadPool, ProgressCallback callback) {
+        ISetBuilder builder = new MultiThreadSetBuilder(width, height, maxIter, builderUtils, threadPool);
+        builder.build(area, currentBottomLeft, currentTopRight, callback);
     }
 
     public void reset() {
@@ -29,11 +39,11 @@ public class SetRenderer {
         this.currentTopRight = Configuration.INITIAL_TOP_RIGHT;
     }
 
-    public void render(WritableImage area) {
-        BuilderUtils builderUtils = new BuilderUtils(width, height);
-        ISetBuilder builder = new SimpleMultiThreadSetBuilder(width, height, maxIter, builderUtils);
-        builder.build(area, currentBottomLeft, currentTopRight);
-    }
+//    public void render(WritableImage area) {
+//        BuilderUtils builderUtils = new BuilderUtils(width, height);
+//        ISetBuilder builder = new MultiThreadSetBuilder(width, height, maxIter, builderUtils);
+//        builder.build(area, currentBottomLeft, currentTopRight);
+//    }
 
     public void zoomTo(Point pBottomLeft, Point pTopRight) {
         ComplexNumber bottomLeft = computeComplexNumber(pBottomLeft);

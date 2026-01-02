@@ -27,3 +27,17 @@
 .back-button:pressed {
     -fx-background-color: #3a3a3a;
 }
+
+.progress-bar {
+    -fx-pref-width: 300px;
+    -fx-pref-height: 30px;
+    -fx-background-color: #2a2a2a;
+    -fx-background-insets: 0;
+    -fx-background-radius: 6px;
+}
+
+.progress-bar .bar {
+    -fx-background-color: linear-gradient(from 0% 0% to 100% 0%, #4a00e0, #8e2de2);
+    -fx-background-insets: 1;
+    -fx-background-radius: 5px;
+}

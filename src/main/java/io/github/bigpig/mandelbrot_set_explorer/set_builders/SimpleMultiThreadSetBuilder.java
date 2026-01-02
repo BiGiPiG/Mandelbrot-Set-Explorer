@@ -3,6 +3,7 @@ package io.github.bigpig.mandelbrot_set_explorer.set_builders;
 import io.github.bigpig.mandelbrot_set_explorer.utils.BuilderUtils;
 import io.github.bigpig.mandelbrot_set_explorer.utils.ComplexNumber;
 import io.github.bigpig.mandelbrot_set_explorer.utils.Point;
+import io.github.bigpig.mandelbrot_set_explorer.utils.ProgressCallback;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
@@ -20,6 +21,8 @@ public class SimpleMultiThreadSetBuilder implements ISetBuilder {
     private final int maxIterCount;
 
     private final BuilderUtils builderUtils;
+    private int pixelCount;
+    private final int totalPixelsCount;
 
     private final Color[][] colors;
 
@@ -29,22 +32,23 @@ public class SimpleMultiThreadSetBuilder implements ISetBuilder {
         this.maxIterCount = maxIterCount;
         this.builderUtils = builderUtils;
         this.colors = new Color[width][height];
+        this.totalPixelsCount = width * height;
     }
 
     @Override
-    public void build(WritableImage image, ComplexNumber bottomLeft, ComplexNumber topRight) {
-        List<Thread> threads = makeThreads(bottomLeft, topRight);
+    public void build(WritableImage image, ComplexNumber bottomLeft, ComplexNumber topRight, ProgressCallback callback) {
+        List<Thread> threads = makeThreads(bottomLeft, topRight, callback);
         startThreads(threads);
         waitAllThreads(threads);
         printSet(image);
     }
 
-    private List<Thread> makeThreads(ComplexNumber bottomLeftPoint, ComplexNumber topRightPoint) {
+    private List<Thread> makeThreads(ComplexNumber bottomLeftPoint, ComplexNumber topRightPoint, ProgressCallback callback) {
         List<Thread> threads = new ArrayList<>();
         for (int i = 0; i < COUNT_THREADS; i++) {
             final int startY = i * 100;
             final int endY = i * 100 + 100;
-            Thread thread = new Thread(() -> buildTask(startY, endY, maxIterCount, bottomLeftPoint, topRightPoint),
+            Thread thread = new Thread(() -> buildTask(startY, endY, maxIterCount, bottomLeftPoint, topRightPoint, callback),
                     "Mandelbrot-Worker-" + i);
             threads.add(thread);
         }
@@ -78,7 +82,7 @@ public class SimpleMultiThreadSetBuilder implements ISetBuilder {
     }
 
     private void buildTask(int y0, int y1, int maxIterCount,
-                           ComplexNumber bottomLeftPoint, ComplexNumber topRightPoint) {
+                           ComplexNumber bottomLeftPoint, ComplexNumber topRightPoint, ProgressCallback callback) {
 
         for (int y = y0; y < y1; y++) {
             for (int x = 0; x < width; x++) {
@@ -107,7 +111,13 @@ public class SimpleMultiThreadSetBuilder implements ISetBuilder {
                         bSum / sampleCount
                 );
                 colors[x][y] = avgColor;
+                incrementPixelCount(callback);
             }
         }
+    }
+
+    private synchronized void incrementPixelCount(ProgressCallback callback) {
+        pixelCount++;
+        if (pixelCount % 2500 == 0) callback.onProgress((double) pixelCount / totalPixelsCount);
     }
 }

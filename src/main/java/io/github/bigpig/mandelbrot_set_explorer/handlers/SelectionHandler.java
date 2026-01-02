@@ -1,6 +1,7 @@
 package io.github.bigpig.mandelbrot_set_explorer.handlers;
 
 import io.github.bigpig.mandelbrot_set_explorer.utils.Point;
+import javafx.application.Platform;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -79,8 +80,13 @@ public class SelectionHandler {
 
     public void deleteSelectionRectangle() {
         if (selection != null) {
-            pane.getChildren().remove(selection);
-            selection = null;
+            Platform.runLater(() -> {
+                Pane parent = (Pane) selection.getParent();
+                if (parent != null) {
+                    parent.getChildren().remove(selection);
+                }
+                selection = null;
+            });
         }
         isCreatedSelectionRectangle = false;
     }
