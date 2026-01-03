@@ -1,7 +1,9 @@
 ## Mandelbrot Set Explorer 🌀
 Mandelbrot Set Explorer — это интерактивное JavaFX-приложение для визуализации фрактала Мандельброта с поддержкой многопоточного рендеринга, зума и истории навигации.
 
-![Explorer](https://github.com/user-attachments/assets/e9c86cad-f0d9-465d-aa12-552da39ecfa2)
+<div align="center">
+  <img src="https://github.com/user-attachments/assets/e9c86cad-f0d9-465d-aa12-552da39ecfa2" alt="Mandelbrot Set Explorer" width="600">
+</div>
 
 ## 🚀 Быстрый старт
 #### Требования
