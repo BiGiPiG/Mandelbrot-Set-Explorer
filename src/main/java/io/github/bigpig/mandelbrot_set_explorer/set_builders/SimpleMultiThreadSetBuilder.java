@@ -14,7 +14,7 @@ import java.util.List;
 public class SimpleMultiThreadSetBuilder implements ISetBuilder {
 
     private static final int SUPER_SAMPLING_FACTOR = 2;
-    private static final int COUNT_THREADS = 5;
+    private static final int COUNT_THREADS = 500;
 
     private final int width;
     private final int height;
@@ -45,9 +45,10 @@ public class SimpleMultiThreadSetBuilder implements ISetBuilder {
 
     private List<Thread> makeThreads(ComplexNumber bottomLeftPoint, ComplexNumber topRightPoint, ProgressCallback callback) {
         List<Thread> threads = new ArrayList<>();
+        int stripeWidth = height / COUNT_THREADS;
         for (int i = 0; i < COUNT_THREADS; i++) {
-            final int startY = i * 100;
-            final int endY = i * 100 + 100;
+            final int startY = i * stripeWidth;
+            final int endY = i * stripeWidth + stripeWidth;
             Thread thread = new Thread(() -> buildTask(startY, endY, maxIterCount, bottomLeftPoint, topRightPoint, callback),
                     "Mandelbrot-Worker-" + i);
             threads.add(thread);

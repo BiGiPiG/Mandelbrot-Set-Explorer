@@ -37,12 +37,6 @@ public class SetRenderer {
         this.currentTopRight = Configuration.INITIAL_TOP_RIGHT;
     }
 
-//    public void render(WritableImage area) {
-//        BuilderUtils builderUtils = new BuilderUtils(width, height);
-//        ISetBuilder builder = new MultiThreadSetBuilder(width, height, maxIter, builderUtils);
-//        builder.build(area, currentBottomLeft, currentTopRight);
-//    }
-
     public void zoomTo(Point pBottomLeft, Point pTopRight) {
         ComplexNumber bottomLeft = computeComplexNumber(pBottomLeft);
         ComplexNumber topRight = computeComplexNumber(pTopRight);

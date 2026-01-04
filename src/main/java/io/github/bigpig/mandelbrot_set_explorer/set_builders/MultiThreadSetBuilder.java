@@ -14,7 +14,7 @@ import java.util.stream.IntStream;
 public class MultiThreadSetBuilder implements ISetBuilder {
 
     private static final int SUPER_SAMPLING_FACTOR = 2;
-    private static final int COUNT_THREADS = 5;
+    private static final int COUNT_THREADS = 500;
 
     private final int width;
     private final int height;
@@ -39,10 +39,11 @@ public class MultiThreadSetBuilder implements ISetBuilder {
 
     @Override
     public void build(WritableImage image, ComplexNumber bottomLeft, ComplexNumber topRight, ProgressCallback callback) {
+        int stripeWidth = height / COUNT_THREADS;
         var futures = IntStream.range(0, COUNT_THREADS)
                 .mapToObj(i -> {
-                    int startY = i * 100;
-                    int endY = Math.min(startY + 100, height);
+                    int startY = i * stripeWidth;
+                    int endY = Math.min(startY + stripeWidth, height);
                     return threadPool.submit(new Task(startY, endY, bottomLeft, topRight, maxIterCount, callback));
                 })
                 .toList();
