@@ -17,6 +17,7 @@ import javafx.stage.Stage;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class MainApplication extends Application {
@@ -36,6 +37,8 @@ public class MainApplication extends Application {
     private ImageView workArea;
     private Label progressLabel;
     private final AtomicInteger frameCount = new AtomicInteger(0);
+
+    private final AtomicBoolean isRendering = new AtomicBoolean(false);
 
     @Override
     public void start(Stage stage) {
@@ -94,7 +97,13 @@ public class MainApplication extends Application {
 
         Pane pane = new Pane();
         pane.getChildren().addAll(workArea, Configuration.createBackButton(() -> {
-            if (setRenderer.setOldBountyPoints()) render();
+            if (isRendering.get()) {
+                return;
+            }
+
+            if (setRenderer.setOldBountyPoints()) {
+                render();
+            }
         }), progressBar, progressLabel);
 
         setupFractalInteraction(workArea);
@@ -123,6 +132,8 @@ public class MainApplication extends Application {
     }
 
     private void render() {
+        isRendering.set(true);
+
         Platform.runLater(() -> {
             workArea.setVisible(false);
             progressBar.setVisible(true);
@@ -147,6 +158,7 @@ public class MainApplication extends Application {
                         })
                 );
             } finally {
+                isRendering.set(false);
                 Platform.runLater(() -> {
                     progressBar.setVisible(false);
                     workArea.setVisible(true);
